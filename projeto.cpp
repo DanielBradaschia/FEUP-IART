@@ -126,13 +126,11 @@ int EvaluateOrganisms()
         // tally up the current organism's fitness
         for (gene = 0; gene < model.size(); ++gene)
         {
-            /*Fazer comparacao de structs
-
-            if (currGen.at(gene) == model.at(gene))
+            /*Fazer operador de comparacao de structs?*/
+            if(currGen.at(gene).numTags == model.at(gene).numTags && currGen.at(gene).tags == model.at(gene).tags && currGen.at(gene).type == model.at(gene).type )
             {
                 ++currentOrganismsFitnessTally;
-            }
-            */
+            }        
         }
 
         // save the tally in the fitnesses data structure
