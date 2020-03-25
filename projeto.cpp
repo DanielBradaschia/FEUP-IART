@@ -21,6 +21,10 @@ typedef struct
     vector<string> tags;
 } Photo;
 
+vector<Photo> currGen, nextGen, model;
+vector<int> organismsFitnesses;
+int totalOfFitnesses, numOrganisms;
+
 //Functions
 vector<string> generateTokens(string line);
 Photo populatePhotos(vector<string> photo);
@@ -32,7 +36,7 @@ int main()
 {
     string fileRead, line, numPhotos;
     ifstream infile;
-    vector<Photo> photos;
+ 
     int answer;
 
             //Leitura do arquivo
@@ -47,24 +51,19 @@ int main()
 
     getline(infile, numPhotos);
     int i = stoi(numPhotos);
+    numOrganisms = i;
 
     while(i > 0){
         getline(infile, line);
-        //cout << line << endl;
+        
         vector<string> aux = generateTokens(line);
         
-        /*
-        for (int j = 0; j < aux.size(); j++)
-            cout << "aux: "<< aux[j] << endl;
-        */
         // initialize the normal organisms
-        photos.push_back(populatePhotos(aux));       
+        currGen.push_back(populatePhotos(aux));
 
         i--;
     }
-    /*
-        cout << photos.size() << endl;
-    */
+
     answer = DoOneRun();
     return 0;
 }
@@ -94,16 +93,6 @@ Photo populatePhotos(vector<string> photo){
     {
         res.tags.push_back(photo[i+2]);
     }
-   
-    /*
-    cout << "TESTE" << endl;
-    cout << res.type << endl;
-    cout << res.numTags << endl;
-    for (int i = 0; i < res.numTags; i++)
-    {
-        cout << res.tags[i] << endl;
-    }
-    */
 
     return res;
 }
@@ -124,7 +113,40 @@ int DoOneRun(){
 
 int EvaluateOrganisms()
 {
- 
+    int organism;
+    int gene;
+    int currentOrganismsFitnessTally;
+
+    totalOfFitnesses = 0;
+
+    for (organism = 0; organism < numOrganisms; ++organism)
+    {
+        currentOrganismsFitnessTally = 0;
+
+        // tally up the current organism's fitness
+        for (gene = 0; gene < model.size(); ++gene)
+        {
+            /*Fazer comparacao de structs
+
+            if (currGen.at(gene) == model.at(gene))
+            {
+                ++currentOrganismsFitnessTally;
+            }
+            */
+        }
+
+        // save the tally in the fitnesses data structure
+        // and add its fitness to the generation's total
+        organismsFitnesses[organism] = currentOrganismsFitnessTally;
+        totalOfFitnesses += currentOrganismsFitnessTally;
+
+        // check if we have a perfect generation
+        if (currentOrganismsFitnessTally == model.size())
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 void ProduceNextGeneration()
