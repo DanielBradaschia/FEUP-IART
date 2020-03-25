@@ -7,6 +7,9 @@
 #include <random>
 #include <chrono>
 #include <cctype>
+#include <stdbool.h>
+
+#define ALLELES 3
 
 using namespace std;
 
@@ -21,17 +24,19 @@ typedef struct
 //Functions
 vector<string> generateTokens(string line);
 Photo populatePhotos(vector<string> photo);
-
-
+int DoOneRun();
+int EvaluateOrganisms();
+void ProduceNextGeneration();
 
 int main()
 {
     string fileRead, line, numPhotos;
     ifstream infile;
     vector<Photo> photos;
+    int answer;
 
-    //Leitura do arquivo
-    cout << "Input file name: " << endl;
+            //Leitura do arquivo
+    cout    << "Input file name: " << endl;
     getline(cin, fileRead);
     infile.open(fileRead);
     if (infile.fail())
@@ -52,14 +57,15 @@ int main()
         for (int j = 0; j < aux.size(); j++)
             cout << "aux: "<< aux[j] << endl;
         */
-
+        // initialize the normal organisms
         photos.push_back(populatePhotos(aux));       
 
         i--;
     }
-
-    cout << photos.size() << endl;
-
+    /*
+        cout << photos.size() << endl;
+    */
+    answer = DoOneRun();
     return 0;
 }
 
@@ -100,4 +106,28 @@ Photo populatePhotos(vector<string> photo){
     */
 
     return res;
+}
+
+int DoOneRun(){
+    int gen = 1;
+    bool ans = false;
+
+    while (true)
+    {
+        ans = EvaluateOrganisms();
+        if (ans == true)
+            return gen;
+        ProduceNextGeneration();
+        ++gen;
+    }
+}
+
+int EvaluateOrganisms()
+{
+ 
+}
+
+void ProduceNextGeneration()
+{
+
 }
