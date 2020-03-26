@@ -106,8 +106,6 @@ Photo populatePhotos(vector<string> photo){
         res.tags.push_back(photo[i+2]);
     }
 
-    printPhoto(res);
-
     return res;
 }
 
