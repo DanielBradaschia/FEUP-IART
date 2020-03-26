@@ -192,7 +192,7 @@ void ProduceNextGeneration(){
     }
     // copy the children in nextGeneration into
     // currentGeneration
-    for(organism = 0; organism < numOrganisms << ++organism){
+    for(organism = 0; organism < numOrganisms; ++organism){
         for(gene = 0; gene < model.size(); ++gene){
             //currGen[organism][gene] = nextGen[organism][gene];
         }
