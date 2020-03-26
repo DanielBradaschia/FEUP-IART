@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 #define ALLELES 3
+#define MUTATION_RATE 0.001
 
 using namespace std;
 
@@ -68,6 +69,17 @@ int main()
     return 0;
 }
 
+void printPhoto(Photo res){
+    cout << "PHOTO {" << endl;
+    cout << "TYPE : " << res.type << endl;
+    cout << "TAGS : ";
+    for (size_t i = 0; i < res.tags.size(); i++){
+        cout << res.tags[i] << " ";
+    }
+    cout << endl;
+    cout << "}" << endl;
+}
+
 vector<string> generateTokens(string line){
     stringstream check1(line);
     string intermediate;
@@ -94,6 +106,8 @@ Photo populatePhotos(vector<string> photo){
         res.tags.push_back(photo[i+2]);
     }
 
+    printPhoto(res);
+
     return res;
 }
 
@@ -111,8 +125,7 @@ int DoOneRun(){
     }
 }
 
-int EvaluateOrganisms()
-{
+int EvaluateOrganisms(){
     int organism;
     int gene;
     int currentOrganismsFitnessTally;
@@ -147,7 +160,58 @@ int EvaluateOrganisms()
     return false;
 }
 
-void ProduceNextGeneration()
-{
+void ProduceNextGeneration(){
+    int organism;
+    int gene;
+    int parentOne;
+    int parentTwo;
+    int crossoverPoint;
+    int mutateThisGene;
 
+    //fill the nextGeneration data structure with the
+    //children
+    for (organism = 0; organism < numOrganisms; ++organism)
+    {
+        parentOne = SelectOneOrganism();
+        parentTwo = SelectOneOrganism();
+        crossoverPoint = rand() % model.size();
+
+        for(gene = 0; gene < model.size(); ++gene){
+            // copy over a single gene
+            mutateThisGene = rand() % (int)(1.0 / MUTATION_RATE);
+            if(mutateThisGene == 0){
+                // we decided to make this gene a mutation
+                nextGen.at(gene).numTags = rand() % ALLELES;
+            } else {
+                // we decided to copy this gene from a parent
+                if(gene < crossoverPoint){
+                    //nextGen[organism][gene] = currGen[ParentOne][gene];
+                } else {
+                    //nextGen[organism][gene] = currGen[ParentTwo][gene];
+                }
+            }
+        }
+    }
+    // copy the children in nextGeneration into
+    // currentGeneration
+    for(organism = 0; organism < numOrganisms << ++organism){
+        for(gene = 0; gene < model.size(); ++gene){
+            //currGen[organism][gene] = nextGen[organism][gene];
+        }
+    }
+}
+
+int SelectOneOrganism(){
+    int organism;
+    int runningTotal;
+    int randomSelectPoint;
+
+    runningTotal = 0;
+    randomSelectPoint = rand() % (totalOfFitnesses + 1);
+
+    for (organism = 0; organism < numOrganisms; ++organism){
+        runningTotal += organismsFitnesses[organism];
+        if(runningTotal >= randomSelectPoint) return organism;
+    }
+    
 }
