@@ -35,7 +35,7 @@ typedef struct
 } Slide;
 
 
-vector<Photo> photoList, model;
+vector<Photo> photoList;
 vector<Slide> currGen, nextGen;
 vector<int> organismsFitnesses;
 int totalOfFitnesses, numOrganisms;
@@ -181,10 +181,10 @@ int EvaluateOrganisms(){
         currentOrganismsFitnessTally = 0;
 
         // tally up the current organism's fitness
-        for (gene = 0; gene < model.size(); ++gene)
+        for (gene = 0; gene < ; ++gene)
         {
             
-            if(currGen.at(gene).numTags == model.at(gene).numTags && currGen.at(gene).tags == model.at(gene).tags && currGen.at(gene).type == model.at(gene).type)
+            if()
             {
                 ++currentOrganismsFitnessTally;
             }        
@@ -196,7 +196,7 @@ int EvaluateOrganisms(){
         totalOfFitnesses += currentOrganismsFitnessTally;
 
         // check if we have a perfect generation
-        if (currentOrganismsFitnessTally == model.size())
+        if (currentOrganismsFitnessTally == )
         {
             return true;
         }
@@ -218,9 +218,9 @@ void ProduceNextGeneration(){
     {
         parentOne = SelectOneOrganism();
         parentTwo = SelectOneOrganism();
-        crossoverPoint = rand() % model.size();
+        crossoverPoint = rand() % ;
 
-        for(gene = 0; gene < model.size(); ++gene){
+        for(gene = 0; gene < ; ++gene){
             // copy over a single gene
             mutateThisGene = rand() % (int)(1.0 / MUTATION_RATE);
             if(mutateThisGene == 0){
@@ -239,7 +239,7 @@ void ProduceNextGeneration(){
     // copy the children in nextGeneration into
     // currentGeneration
     for(organism = 0; organism < numOrganisms; ++organism){
-        for(gene = 0; gene < model.size(); ++gene){
+        for(gene = 0; gene < ; ++gene){
             //currGen[organism][gene] = nextGen[organism][gene];
         }
     }
@@ -310,7 +310,6 @@ vector<Slide> generateSlideshow(vector<Photo> photoList){
                 vert2 = photoList[i];
                 aux.photo1Id = vert1.id;
                 aux.photo2Id = vert2.id;
-                //aux.tags = vert1.tags;copy(source.begin(), source.end(), std::back_inserter(destination))
                 aux.tags = vert1.tags;
                 copy(vert2.tags.begin(), vert2.tags.end(), back_inserter(aux.tags));
                 sort(aux.tags.begin(), aux.tags.end());
