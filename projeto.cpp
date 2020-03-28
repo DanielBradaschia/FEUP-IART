@@ -35,7 +35,8 @@ typedef struct
 
 vector<Photo> photoList;
 vector<Slide> currGen, nextGen;
-vector<int> organismsFitnesses;
+vector<vector<Slide>> organisms;
+vector<int> organismsFitnesses, organismsScore;
 int totalOfFitnesses, numOrganisms;
 
 //Functions
@@ -83,6 +84,15 @@ int main()
         i--;
         id++;
     }
+
+    //Fill organisms
+    for(int j = 0; j < 10; j++)
+    {
+        organisms.push_back(generateSlideshow(photoList));
+        organismsScore.push_back(calculateScore(organisms.at(j)));
+        random_shuffle(photoList.begin(), photoList.end());
+    }
+
     currGen = generateSlideshow(photoList);
     cout << calculateScore(currGen) << endl;
     for(int j = 0; j < currGen.size(); j++)
@@ -251,20 +261,6 @@ int SelectOneOrganism(){
     
 }
 */
-vector<string> mergeTags(Photo p1, Photo p2){
-
-    vector<string> res;
-    vector<string>::iterator it;
-
-    sort(p1.tags.begin(), p1.tags.end());
-    sort(p2.tags.begin(), p2.tags.end());
-
-    it = set_union(p1.tags.begin(), p1.tags.end(), p2.tags.begin(), p2.tags.end(), res.begin());
-    res.resize(it-res.begin());
-
-    return res;
-}
-
 vector<Slide> generateSlideshow(vector<Photo> photoList){
     //reset used attribute
     for (int i = 0; i < photoList.size(); ++i)
