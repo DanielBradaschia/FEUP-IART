@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cctype>
 #include <stdbool.h>
+#include <algorithm>
 
 #define ALLELES 3
 #define MUTATION_RATE 0.001
@@ -17,26 +18,37 @@ using namespace std;
 //Global Variables
 typedef struct
 {
+    int id;
     string type;
     int numTags;
     vector<string> tags;
+    bool used;
 } Photo;
 
 typedef struct
 {
-    int photo1Id, photo2Id, score, isHorizontal;
+    int photo1Id, 
+        photo2Id, 
+        score, 
+        isHorizontal;
+    vector<string> tags;
 } Slide;
 
-vector<Photo> currGen, nextGen, model;
+
+vector<Photo> photoList, model;
+vector<Slide> currGen, nextGen;
 vector<int> organismsFitnesses;
 int totalOfFitnesses, numOrganisms;
 
 //Functions
 vector<string> generateTokens(string line);
-Photo populatePhotos(vector<string> photo);
+Photo populatePhotos(vector<string> photo, int id);
 int DoOneRun();
 int EvaluateOrganisms();
 void ProduceNextGeneration();
+vector<string> mergeTags(Photo p1, Photo p2);
+vector<Slide> generateSlideshow(vector<Photo> photoList);
+void printSlide(Slide res);
 
 int main()
 {
@@ -59,18 +71,23 @@ int main()
     int i = stoi(numPhotos);
     numOrganisms = i;
 
+    int id = 1;
+
     while(i > 0){
         getline(infile, line);
         
         vector<string> aux = generateTokens(line);
         
         // initialize the normal organisms
-        currGen.push_back(populatePhotos(aux));
+        photoList.push_back(populatePhotos(aux, id));
 
         i--;
+        id++;
     }
-
-    answer = DoOneRun();
+    currGen = generateSlideshow(photoList);
+    for(int j = 0; j < currGen.size(); j++)
+        printSlide(currGen.at(j));
+    //answer = DoOneRun();
     return 0;
 }
 
@@ -79,6 +96,20 @@ void printPhoto(Photo res){
     cout << "TYPE : " << res.type << endl;
     cout << "TAGS : ";
     for (size_t i = 0; i < res.tags.size(); i++){
+        cout << res.tags[i] << " ";
+    }
+    cout << endl;
+    cout << "}" << endl;
+}
+
+void printSlide(Slide res)
+{
+    cout << "Slide {" << endl;
+    cout << "id1 e id2: " << res.photo1Id << " " << res.photo2Id << endl;
+    cout << "H : " << res.isHorizontal << endl;
+    cout << "TAGS : ";
+    for (size_t i = 0; i < res.tags.size(); i++)
+    {
         cout << res.tags[i] << " ";
     }
     cout << endl;
@@ -99,10 +130,11 @@ vector<string> generateTokens(string line){
     return tokens;
 }
 
-Photo populatePhotos(vector<string> photo){
+Photo populatePhotos(vector<string> photo, int id){
 
     Photo res;
 
+    res.id = id;
     res.type = photo[0];
     res.numTags = stoi(photo[1]);
 
@@ -111,9 +143,11 @@ Photo populatePhotos(vector<string> photo){
         res.tags.push_back(photo[i+2]);
     }
 
+    res.used = false;
+
     return res;
 }
-
+/*
 int DoOneRun(){
     int gen = 1;
     bool ans = false;
@@ -142,7 +176,7 @@ int EvaluateOrganisms(){
         // tally up the current organism's fitness
         for (gene = 0; gene < model.size(); ++gene)
         {
-            /*Fazer operador de comparacao de structs?*/
+            
             if(currGen.at(gene).numTags == model.at(gene).numTags && currGen.at(gene).tags == model.at(gene).tags && currGen.at(gene).type == model.at(gene).type)
             {
                 ++currentOrganismsFitnessTally;
@@ -217,4 +251,68 @@ int SelectOneOrganism(){
         if(runningTotal >= randomSelectPoint) return organism;
     }
     
+}
+*/
+vector<string> mergeTags(Photo p1, Photo p2){
+
+    vector<string> res;
+    vector<string>::iterator it;
+
+    sort(p1.tags.begin(), p1.tags.end());
+    sort(p2.tags.begin(), p2.tags.end());
+
+    it = set_union(p1.tags.begin(), p1.tags.end(), p2.tags.begin(), p2.tags.end(), res.begin());
+    res.resize(it-res.begin());
+
+    return res;
+}
+
+vector<Slide> generateSlideshow(vector<Photo> photoList){
+    //reset used attribute
+    for (int i = 0; i < photoList.size(); ++i)
+    {
+        photoList[i].used = false;
+    }
+
+    vector<Slide> slideshow;
+    int processed = 0;
+    Photo horz, vert1, vert2;
+    slideshow.reserve(photoList.size());
+
+    for (int i = 0; i < photoList.size(); i++)
+    {
+        Slide aux;
+        if (photoList[i].type == "H")
+        {
+            
+            photoList[i].used = true;
+            horz = photoList[i];
+            processed++;
+            aux.photo1Id = horz.id;
+            aux.photo2Id = -1;
+            aux.tags = horz.tags;
+            slideshow.push_back(aux);
+        }
+
+        if (photoList[i].type == "V")
+        {
+            if(vert1.id != photoList[i].id)
+            {
+                vert2 = photoList[i];
+                aux.photo1Id = vert1.id;
+                aux.photo2Id = vert2.id;
+                aux.tags = vert1.tags;
+                slideshow.push_back(aux);
+            }
+            else
+            {
+                photoList[i].used = true;
+                vert1 = photoList[i];
+                processed++;
+            }
+        }
+    }
+
+    return slideshow;
+
 }
