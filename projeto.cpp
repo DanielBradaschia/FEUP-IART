@@ -308,7 +308,11 @@ vector<Slide> generateSlideshow(vector<Photo> photoList){
                 vert2 = photoList[i];
                 aux.photo1Id = vert1.id;
                 aux.photo2Id = vert2.id;
+                //aux.tags = vert1.tags;copy(source.begin(), source.end(), std::back_inserter(destination))
                 aux.tags = vert1.tags;
+                copy(vert2.tags.begin(), vert2.tags.end(), back_inserter(aux.tags));
+                sort(aux.tags.begin(), aux.tags.end());
+                aux.tags.erase(unique(aux.tags.begin(), aux.tags.end()), aux.tags.end());
                 aux.isHorizontal = 0;
                 vert1.id = -1;
                 slideshow.push_back(aux);
