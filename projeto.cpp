@@ -105,8 +105,13 @@ void printPhoto(Photo res){
 void printSlide(Slide res)
 {
     cout << "Slide {" << endl;
-    cout << "id1 e id2: " << res.photo1Id << " " << res.photo2Id << endl;
-    cout << "H : " << res.isHorizontal << endl;
+    if(res.isHorizontal){
+        cout << "id1: " << res.photo1Id << endl;
+        cout << "TYPE : H" << endl;
+    } else {
+        cout << "id1 e id2: " << res.photo1Id << " " << res.photo2Id << endl;
+        cout << "TYPE : V" << endl;
+    }
     cout << "TAGS : ";
     for (size_t i = 0; i < res.tags.size(); i++)
     {
@@ -277,6 +282,7 @@ vector<Slide> generateSlideshow(vector<Photo> photoList){
     vector<Slide> slideshow;
     int processed = 0;
     Photo horz, vert1, vert2;
+    vert1.id = -1;
     slideshow.reserve(photoList.size());
 
     for (int i = 0; i < photoList.size(); i++)
@@ -291,17 +297,20 @@ vector<Slide> generateSlideshow(vector<Photo> photoList){
             aux.photo1Id = horz.id;
             aux.photo2Id = -1;
             aux.tags = horz.tags;
+            aux.isHorizontal = 1;
             slideshow.push_back(aux);
         }
 
         if (photoList[i].type == "V")
         {
-            if(vert1.id != photoList[i].id)
+            if(vert1.id != -1)
             {
                 vert2 = photoList[i];
                 aux.photo1Id = vert1.id;
                 aux.photo2Id = vert2.id;
                 aux.tags = vert1.tags;
+                aux.isHorizontal = 0;
+                vert1.id = -1;
                 slideshow.push_back(aux);
             }
             else
