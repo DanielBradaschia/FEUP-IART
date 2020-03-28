@@ -48,6 +48,7 @@ int EvaluateOrganisms();
 void ProduceNextGeneration();
 vector<string> mergeTags(Photo p1, Photo p2);
 vector<Slide> generateSlideshow(vector<Photo> photoList);
+int calculateScore(vector<Slide> slideshow);
 void printSlide(Slide res);
 
 int main()
@@ -85,6 +86,7 @@ int main()
         id++;
     }
     currGen = generateSlideshow(photoList);
+    cout << calculateScore(currGen) << endl;
     for(int j = 0; j < currGen.size(); j++)
         printSlide(currGen.at(j));
     //answer = DoOneRun();
@@ -328,4 +330,35 @@ vector<Slide> generateSlideshow(vector<Photo> photoList){
 
     return slideshow;
 
+}
+
+int calculateScore(vector<Slide> slideshow)
+{
+    int res = 0;
+
+    for(int i = 0; i < slideshow.size()-1; i++)
+    {
+        vector<string> vector1 = slideshow.at(i).tags, vector2 = slideshow.at(i + 1).tags;
+        vector<string> difference1, difference2, intersection;
+
+        // Sort the vectors
+        sort(vector1.begin(), vector1.end());
+        sort(vector2.begin(), vector2.end());
+
+        //tags in vector1 and not in vector2
+        set_difference(vector1.begin(), vector1.end(), vector2.begin(), vector2.end(), back_inserter(difference1));
+
+        //tags in vector2 and not in vector1
+        set_difference(vector2.begin(), vector2.end(), vector1.begin(), vector1.end(), back_inserter(difference2));
+
+        //tags in common
+        set_intersection(vector1.begin(), vector1.end(), vector2.begin(), vector2.end(), back_inserter(intersection));
+
+        size_t aux = min(difference1.size(),difference2.size());
+        
+        res += min(aux, intersection.size());
+
+    }
+
+    return res;
 }
