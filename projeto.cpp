@@ -10,8 +10,6 @@
 #include <stdbool.h>
 #include <algorithm>
 
-#define ALLELES 3
-#define MUTATION_RATE 0.001
 
 using namespace std;
 
@@ -210,7 +208,6 @@ void ProduceNextGeneration(){
     int parentOne;
     int parentTwo;
     int crossoverPoint;
-    int mutateThisGene;
 
     //fill the nextGeneration data structure with the
     //children
@@ -222,18 +219,12 @@ void ProduceNextGeneration(){
 
         for(gene = 0; gene < ; ++gene){
             // copy over a single gene
-            mutateThisGene = rand() % (int)(1.0 / MUTATION_RATE);
-            if(mutateThisGene == 0){
-                // we decided to make this gene a mutation
-                nextGen.at(gene).numTags = rand() % ALLELES;
-            } else {
                 // we decided to copy this gene from a parent
                 if(gene < crossoverPoint){
                     //nextGen[organism][gene] = currGen[ParentOne][gene];
                 } else {
                     //nextGen[organism][gene] = currGen[ParentTwo][gene];
                 }
-            }
         }
     }
     // copy the children in nextGeneration into
