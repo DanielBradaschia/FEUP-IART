@@ -22,6 +22,11 @@ typedef struct
     vector<string> tags;
 } Photo;
 
+typedef struct
+{
+    int photo1Id, photo2Id, score, isHorizontal;
+} Slide;
+
 vector<Photo> currGen, nextGen, model;
 vector<int> organismsFitnesses;
 int totalOfFitnesses, numOrganisms;
@@ -37,10 +42,10 @@ int main()
 {
     string fileRead, line, numPhotos;
     ifstream infile;
- 
+
     int answer;
 
-            //Leitura do arquivo
+    //Leitura do arquivo
     cout    << "Input file name: " << endl;
     getline(cin, fileRead);
     infile.open(fileRead);
@@ -138,7 +143,7 @@ int EvaluateOrganisms(){
         for (gene = 0; gene < model.size(); ++gene)
         {
             /*Fazer operador de comparacao de structs?*/
-            if(currGen.at(gene).numTags == model.at(gene).numTags && currGen.at(gene).tags == model.at(gene).tags && currGen.at(gene).type == model.at(gene).type )
+            if(currGen.at(gene).numTags == model.at(gene).numTags && currGen.at(gene).tags == model.at(gene).tags && currGen.at(gene).type == model.at(gene).type)
             {
                 ++currentOrganismsFitnessTally;
             }        
