@@ -38,7 +38,7 @@ vector<Photo> photoList;
 vector<vector<Slide>> currGen, nextGen;
 vector<int> organismsScore;
 int totalOfFitnesses, numOrganisms;
-int cz = 5;
+int cz;
 
 //Functions
 vector<string> generateTokens(string line);
@@ -75,6 +75,7 @@ int main()
     int i = stoi(numPhotos);
     numOrganisms = i;
 
+    cz = numOrganisms / 2;
     int id = 1;
 
     while(i > 0){
