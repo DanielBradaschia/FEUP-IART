@@ -34,8 +34,8 @@ typedef struct
 
 
 vector<Photo> photoList;
-vector<Slide> currGen, nextGen;
-vector<vector<Slide>> organisms;
+//vector<Slide> currGen, nextGen;
+vector<vector<Slide>> currGen, nextGen;
 vector<int> organismsScore;
 int totalOfFitnesses, numOrganisms;
 bool cz = false;
@@ -92,22 +92,24 @@ int main()
     //Fill organisms
     for(int j = 0; j < 10; j++)
     {
-        organisms.push_back(generateSlideshow(photoList));
-        organismsScore.push_back(calculateScore(organisms.at(j)));
+        currGen.push_back(generateSlideshow(photoList));
+        organismsScore.push_back(calculateScore(currGen.at(j)));
         random_shuffle(photoList.begin(), photoList.end());
     }
 
 
 
-    /*testes*/
+    /*testes
     currGen = generateSlideshow(photoList);
     cout << calculateScore(currGen) << endl;
     for(int j = 0; j < currGen.size(); j++)
         printSlide(currGen.at(j));
+    */
     
     
+    answer = DoOneRun();
+    cout << answer << endl;
     
-    //answer = DoOneRun();
     return 0;
 }
 
@@ -200,23 +202,24 @@ void ProduceNextGeneration(){
     {
         parentOne = SelectOneOrganism();
         parentTwo = SelectOneOrganism();
-        crossoverPoint = rand() % organisms.size();
+        crossoverPoint = rand() % currGen.size();
 
-        for(gene = 0; gene < ; ++gene){
+        for(gene = 0; gene < currGen.size(); ++gene){
             // copy over a single gene
                 // we decided to copy this gene from a parent
                 if(gene < crossoverPoint){
-                    nextGen[organism][gene] = currGen[ParentOne][gene];
+                    nextGen[organism][gene] = currGen[parentOne][gene];
                 } else {
-                    //nextGen[organism][gene] = currGen[ParentTwo][gene];
+                    nextGen[organism][gene] = currGen[parentTwo][gene];
                 }
         }
     }
     // copy the children in nextGeneration into
     // currentGeneration
     for(organism = 0; organism < numOrganisms; ++organism){
-        for(gene = 0; gene < ; ++gene){
-            //currGen[organism][gene] = nextGen[organism][gene];
+        for (gene = 0; gene < currGen.size(); ++gene)
+        {
+            currGen[organism][gene] = nextGen[organism][gene];
         }
     }
 }
@@ -224,17 +227,18 @@ void ProduceNextGeneration(){
 int SelectOneOrganism(){
     int runningTotal;
     int randomSelectPoint;
+    int o = 0;
 
     runningTotal = 0;
     randomSelectPoint = rand() % (totalOfFitnesses + 1);
 
-    for (int o = 0; o < organisms.size(); ++o)
+    for (; o < currGen.size(); ++o)
     {
         runningTotal += organismsScore.at(0);
         if(runningTotal >= randomSelectPoint)
          return o;
     }
-    
+    return o;
 }
 
 
@@ -243,8 +247,12 @@ bool EvaluateOrganisms(){
     int gene;
     int currentOrganismsFitnessTally;
 
-    currentOrganismsFitnessTally = calculateScore(currGen);
-    totalOfFitnesses += currentOrganismsFitnessTally;
+    for(int i = 0; i < currGen.size(); i++)
+    {
+        currentOrganismsFitnessTally = calculateScore(currGen.at(i));
+        totalOfFitnesses += currentOrganismsFitnessTally;
+    }
+
     
     if(cz)
         return true;
