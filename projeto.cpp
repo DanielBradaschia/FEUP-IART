@@ -38,7 +38,7 @@ vector<Photo> photoList;
 vector<vector<Slide>> currGen, nextGen;
 vector<int> organismsScore;
 int totalOfFitnesses, numOrganisms;
-bool cz = false;
+int cz = 5;
 
 //Functions
 vector<string> generateTokens(string line);
@@ -207,9 +207,6 @@ void ProduceNextGeneration(){
         parentTwo = SelectOneOrganism();
         crossoverPoint = rand() % currGen.size();
 
-        cout << parentOne << endl;
-        cout << parentTwo << endl;
-
         for(gene = 0; gene < currGen.at(0).size(); ++gene){
             // copy over a single gene
             // we decided to copy this gene from a parent
@@ -226,7 +223,7 @@ void ProduceNextGeneration(){
     // copy the children in nextGeneration into
     // currentGeneration
     for(organism = 0; organism < numOrganisms; ++organism){
-        for (gene = 0; gene < currGen.size(); ++gene)
+        for (gene = 0; gene < currGen.at(0).size(); ++gene)
         {
             currGen[organism][gene] = nextGen[organism][gene];
         }
@@ -262,8 +259,9 @@ bool EvaluateOrganisms(){
         totalOfFitnesses += currentOrganismsFitnessTally;
     }
 
-    
-    if(cz)
+    cz--;
+
+    if(cz == 0)
         return true;
 
     return false;
@@ -350,11 +348,6 @@ int calculateScore(vector<Slide> slideshow){
         size_t aux = min(difference1.size(),difference2.size());
         
         res += min(aux, intersection.size());
-
-        if(i == 5)
-            cz = true;
-
     }
-
     return res;
 }
