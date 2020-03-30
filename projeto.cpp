@@ -201,13 +201,16 @@ void ProduceNextGeneration(){
 
         //fill the nextGeneration data structure with the
         //children
-    for (organism = 0; organism < numOrganisms; ++organism)
+    for (organism = 0; organism < currGen.size(); ++organism)
     {
         parentOne = SelectOneOrganism();
         parentTwo = SelectOneOrganism();
         crossoverPoint = rand() % currGen.size();
 
-        for(gene = 0; gene < currGen.size(); ++gene){
+        cout << parentOne << endl;
+        cout << parentTwo << endl;
+
+        for(gene = 0; gene < currGen.at(0).size(); ++gene){
             // copy over a single gene
             // we decided to copy this gene from a parent
             if (gene < crossoverPoint)
@@ -238,7 +241,7 @@ int SelectOneOrganism(){
     runningTotal = 0;
     randomSelectPoint = rand() % (totalOfFitnesses + 1);
 
-    for (; o < currGen.size(); ++o)
+    for (; o < currGen.size()-1; ++o)
     {
         runningTotal += organismsScore.at(0);
         if(runningTotal >= randomSelectPoint)
