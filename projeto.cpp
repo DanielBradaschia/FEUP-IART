@@ -93,6 +93,7 @@ int main()
     for(int j = 0; j < 10; j++)
     {
         currGen.push_back(generateSlideshow(photoList));
+        nextGen.push_back(generateSlideshow(photoList));
         organismsScore.push_back(calculateScore(currGen.at(j)));
         random_shuffle(photoList.begin(), photoList.end());
     }
@@ -109,7 +110,7 @@ int main()
     
     answer = DoOneRun();
     cout << answer << endl;
-    
+
     return 0;
 }
 
@@ -181,8 +182,10 @@ int DoOneRun(){
     while (true)
     {
         ans = EvaluateOrganisms();
+        cout << "TESTE" << endl;
         if (ans == true)
             return gen;
+        
         ProduceNextGeneration();
         ++gen;
     }
@@ -196,8 +199,8 @@ void ProduceNextGeneration(){
     int parentTwo;
     int crossoverPoint;
 
-    //fill the nextGeneration data structure with the
-    //children
+        //fill the nextGeneration data structure with the
+        //children
     for (organism = 0; organism < numOrganisms; ++organism)
     {
         parentOne = SelectOneOrganism();
