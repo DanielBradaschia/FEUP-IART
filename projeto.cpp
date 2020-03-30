@@ -36,19 +36,21 @@ typedef struct
 vector<Photo> photoList;
 vector<Slide> currGen, nextGen;
 vector<vector<Slide>> organisms;
-vector<int> organismsFitnesses, organismsScore;
+vector<int> organismsScore;
 int totalOfFitnesses, numOrganisms;
+bool cz = false;
 
 //Functions
 vector<string> generateTokens(string line);
 Photo populatePhotos(vector<string> photo, int id);
 int DoOneRun();
-int EvaluateOrganisms();
 void ProduceNextGeneration();
 vector<string> mergeTags(Photo p1, Photo p2);
 vector<Slide> generateSlideshow(vector<Photo> photoList);
 int calculateScore(vector<Slide> slideshow);
 void printSlide(Slide res);
+bool EvaluateOrganisms();
+int SelectOneOrganism();
 
 int main()
 {
@@ -56,6 +58,8 @@ int main()
     ifstream infile;
 
     int answer;
+
+    totalOfFitnesses = 0;
 
     //Leitura do arquivo
     cout    << "Input file name: " << endl;
@@ -93,10 +97,16 @@ int main()
         random_shuffle(photoList.begin(), photoList.end());
     }
 
+
+
+    /*testes*/
     currGen = generateSlideshow(photoList);
     cout << calculateScore(currGen) << endl;
     for(int j = 0; j < currGen.size(); j++)
         printSlide(currGen.at(j));
+    
+    
+    
     //answer = DoOneRun();
     return 0;
 }
@@ -112,8 +122,7 @@ void printPhoto(Photo res){
     cout << "}" << endl;
 }
 
-void printSlide(Slide res)
-{
+void printSlide(Slide res){
     cout << "Slide {" << endl;
     if(res.isHorizontal){
         cout << "id1: " << res.photo1Id << endl;
@@ -162,7 +171,7 @@ Photo populatePhotos(vector<string> photo, int id){
 
     return res;
 }
-/*
+
 int DoOneRun(){
     int gen = 1;
     bool ans = false;
@@ -177,40 +186,6 @@ int DoOneRun(){
     }
 }
 
-int EvaluateOrganisms(){
-    int organism;
-    int gene;
-    int currentOrganismsFitnessTally;
-
-    totalOfFitnesses = 0;
-
-    for (organism = 0; organism < numOrganisms; ++organism)
-    {
-        currentOrganismsFitnessTally = 0;
-
-        // tally up the current organism's fitness
-        for (gene = 0; gene < ; ++gene)
-        {
-            
-            if()
-            {
-                ++currentOrganismsFitnessTally;
-            }        
-        }
-
-        // save the tally in the fitnesses data structure
-        // and add its fitness to the generation's total
-        organismsFitnesses[organism] = currentOrganismsFitnessTally;
-        totalOfFitnesses += currentOrganismsFitnessTally;
-
-        // check if we have a perfect generation
-        if (currentOrganismsFitnessTally == )
-        {
-            return true;
-        }
-    }
-    return false;
-}
 
 void ProduceNextGeneration(){
     int organism;
@@ -225,13 +200,13 @@ void ProduceNextGeneration(){
     {
         parentOne = SelectOneOrganism();
         parentTwo = SelectOneOrganism();
-        crossoverPoint = rand() % ;
+        crossoverPoint = rand() % organisms.size();
 
         for(gene = 0; gene < ; ++gene){
             // copy over a single gene
                 // we decided to copy this gene from a parent
                 if(gene < crossoverPoint){
-                    //nextGen[organism][gene] = currGen[ParentOne][gene];
+                    nextGen[organism][gene] = currGen[ParentOne][gene];
                 } else {
                     //nextGen[organism][gene] = currGen[ParentTwo][gene];
                 }
@@ -247,20 +222,36 @@ void ProduceNextGeneration(){
 }
 
 int SelectOneOrganism(){
-    int organism;
     int runningTotal;
     int randomSelectPoint;
 
     runningTotal = 0;
     randomSelectPoint = rand() % (totalOfFitnesses + 1);
 
-    for (organism = 0; organism < numOrganisms; ++organism){
-        runningTotal += organismsFitnesses[organism];
-        if(runningTotal >= randomSelectPoint) return organism;
+    for (int o = 0; o < organisms.size(); ++o)
+    {
+        runningTotal += organismsScore.at(0);
+        if(runningTotal >= randomSelectPoint)
+         return o;
     }
     
 }
-*/
+
+
+bool EvaluateOrganisms(){
+    int organism;
+    int gene;
+    int currentOrganismsFitnessTally;
+
+    currentOrganismsFitnessTally = calculateScore(currGen);
+    totalOfFitnesses += currentOrganismsFitnessTally;
+    
+    if(cz)
+        return true;
+
+    return false;
+}
+
 vector<Slide> generateSlideshow(vector<Photo> photoList){
     //reset used attribute
     for (int i = 0; i < photoList.size(); ++i)
@@ -318,8 +309,7 @@ vector<Slide> generateSlideshow(vector<Photo> photoList){
 
 }
 
-int calculateScore(vector<Slide> slideshow)
-{
+int calculateScore(vector<Slide> slideshow){
     int res = 0;
 
     for(int i = 0; i < slideshow.size()-1; i++)
@@ -343,6 +333,9 @@ int calculateScore(vector<Slide> slideshow)
         size_t aux = min(difference1.size(),difference2.size());
         
         res += min(aux, intersection.size());
+
+        if(i == 5)
+            cz = true;
 
     }
 
