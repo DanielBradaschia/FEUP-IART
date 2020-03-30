@@ -60,7 +60,7 @@ int main()
     int answer;
 
     totalOfFitnesses = 0;
-
+    srand(time(0));
     //Leitura do arquivo
     cout    << "Input file name: " << endl;
     getline(cin, fileRead);
@@ -182,7 +182,7 @@ int DoOneRun(){
     while (true)
     {
         ans = EvaluateOrganisms();
-        cout << "TESTE" << endl;
+        
         if (ans == true)
             return gen;
         
@@ -209,12 +209,15 @@ void ProduceNextGeneration(){
 
         for(gene = 0; gene < currGen.size(); ++gene){
             // copy over a single gene
-                // we decided to copy this gene from a parent
-                if(gene < crossoverPoint){
-                    nextGen[organism][gene] = currGen[parentOne][gene];
-                } else {
-                    nextGen[organism][gene] = currGen[parentTwo][gene];
-                }
+            // we decided to copy this gene from a parent
+            if (gene < crossoverPoint)
+            {
+                nextGen.at(organism).at(gene) = currGen.at(parentOne).at(gene);
+            }
+            else
+            {
+                nextGen.at(organism).at(gene) = currGen.at(parentTwo).at(gene);
+            }
         }
     }
     // copy the children in nextGeneration into
