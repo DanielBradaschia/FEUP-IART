@@ -34,7 +34,7 @@ typedef struct
 
 
 vector<Photo> photoList;
-//vector<Slide> currGen, nextGen;
+vector<Slide> bestGen;
 vector<vector<Slide>> currGen, nextGen;
 vector<int> organismsScore;
 int totalOfFitnesses, numOrganisms;
@@ -108,9 +108,17 @@ int main()
         printSlide(currGen.at(j));
     */
     
-    
     answer = DoOneRun();
-    cout << answer << endl;
+
+    bestGen = currGen.at(0);
+    for (int k = 0; k < currGen.size(); k++)
+    {
+        if (calculateScore(bestGen) < calculateScore(currGen.at(k)))
+        {
+            bestGen = currGen.at(k);
+        }
+    }
+    cout << calculateScore(bestGen);
 
     return 0;
 }
