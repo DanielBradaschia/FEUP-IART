@@ -45,7 +45,6 @@ vector<string> generateTokens(string line);
 Photo populatePhotos(vector<string> photo, int id);
 int DoOneRun();
 void ProduceNextGeneration();
-vector<string> mergeTags(Photo p1, Photo p2);
 vector<Slide> generateSlideshow(vector<Photo> photoList);
 int calculateScore(vector<Slide> slideshow);
 void printSlide(Slide res);
@@ -56,6 +55,7 @@ int main()
 {
     string fileRead, line, numPhotos;
     ifstream infile;
+    ofstream outputFile;
 
     int answer;
 
@@ -99,14 +99,6 @@ int main()
         random_shuffle(photoList.begin(), photoList.end());
     }
 
-
-
-    /*testes
-    currGen = generateSlideshow(photoList);
-    cout << calculateScore(currGen) << endl;
-    for(int j = 0; j < currGen.size(); j++)
-        printSlide(currGen.at(j));
-    */
     
     answer = DoOneRun();
 
@@ -118,7 +110,18 @@ int main()
             bestGen = currGen.at(k);
         }
     }
-    cout << calculateScore(bestGen);
+
+    //write slideshow
+    outputFile.open("slideshow.txt");
+    outputFile << bestGen.size() << endl;
+    for (int i = 0; i < bestGen.size(); i++)
+    {
+        outputFile << bestGen.at(i).photo1Id;
+        if (bestGen.at(i).photo2Id == -1)
+            outputFile << endl;
+        else
+            outputFile << " " << bestGen.at(i).photo2Id << endl;
+    }
 
     return 0;
 }
@@ -217,8 +220,6 @@ void ProduceNextGeneration(){
         crossoverPoint = rand() % currGen.size();
 
         for(gene = 0; gene < currGen.at(0).size(); ++gene){
-            // copy over a single gene
-            // we decided to copy this gene from a parent
             if (gene < crossoverPoint)
             {
                 nextGen.at(organism).at(gene) = currGen.at(parentOne).at(gene);
