@@ -75,7 +75,7 @@ int main()
     int i = stoi(numPhotos);
     numOrganisms = i;
 
-    cz = numOrganisms / 2;
+    cz = numOrganisms;
     int id = 1;
 
     while(i > 0){
