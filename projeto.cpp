@@ -290,7 +290,9 @@ bool EvaluateOrganisms(){
 
     cz++;
 
-    cout << "Final Score: " << calculateScore(bestGen) << endl;
+    if(ret == true){
+        cout << "Final Score: " << calculateScore(bestGen) << endl;
+    }
 
     return ret;
 }
@@ -394,7 +396,7 @@ vector<Slide> hillClimbing(){
         currentScore = calculateScore(current);
         neighborScore = calculateScore(neighbor);
 
-        if (neighborScore > currentScore)
+        if (neighborScore <= currentScore)
         {
             cout << "Initial Score: " << currentScore << endl;
             return current;
