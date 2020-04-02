@@ -273,22 +273,26 @@ bool EvaluateOrganisms(){
     int organism;
     int gene;
     int currentOrganismsFitnessTally;
+    bool res;
 
     for(int i = 0; i < currGen.size(); i++)
     {
         currentOrganismsFitnessTally = calculateScore(currGen.at(i));
         totalOfFitnesses += currentOrganismsFitnessTally;
 
+        cout << "Tally: " << currentOrganismsFitnessTally << endl;
+        cout << "Model: " << calculateScore(model) << endl;
+
         if (currentOrganismsFitnessTally > calculateScore(model))
         {
             bestGen = currGen.at(i);
-            return true;
+            res = true;
         }    
     }
 
     cz++;
 
-    return false;
+    return res;
 }
 
 vector<Slide> generateSlideshow(vector<Photo> photoList){
@@ -392,7 +396,7 @@ vector<Slide> hillClimbing(){
         cout << "Current Score: " << currentScore << endl;
         cout << "Neighbor Score: " << neighborScore << endl;
 
-        if (neighborScore <= currentScore)
+        if (neighborScore < currentScore)
         {
             return current;
         }
