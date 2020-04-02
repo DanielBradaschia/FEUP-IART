@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <algorithm>
 
+#define MUTATION_RATE 0.001
 
 using namespace std;
 
@@ -51,6 +52,7 @@ void printSlide(Slide res);
 bool EvaluateOrganisms();
 int SelectOneOrganism();
 vector<Slide> hillClimbing();
+Slide mutateSlide();
 
 int main()
 {
@@ -106,7 +108,7 @@ int main()
     
     
     answer = DoOneRun();
-
+    cout << "Best Generation was: " << answer << endl;
     //write slideshow
     outputFile.open("slideshow.txt");
     outputFile << bestGen.size() << endl;
@@ -206,6 +208,7 @@ void ProduceNextGeneration(){
     int parentOne;
     int parentTwo;
     int crossoverPoint;
+    int mutateThisGene;
 
     //fill the nextGeneration data structure with the
     //children
@@ -216,13 +219,25 @@ void ProduceNextGeneration(){
         crossoverPoint = rand() % currGen.size();
 
         for(gene = 0; gene < currGen.at(0).size(); ++gene){
-            if (gene < crossoverPoint)
+            // copy over a single gene
+            mutateThisGene = rand() % (int)(1.0 / MUTATION_RATE);
+            if (mutateThisGene == 0)
             {
-                nextGen.at(organism).at(gene) = currGen.at(parentOne).at(gene);
+
+                // we decided to make this gene a mutation
+                nextGen[organism][gene] = mutateSlide();
             }
             else
             {
-                nextGen.at(organism).at(gene) = currGen.at(parentTwo).at(gene);
+                // we decided to copy this gene from a parent
+                if (gene < crossoverPoint)
+                {
+                    nextGen.at(organism).at(gene) = currGen.at(parentOne).at(gene);
+                }
+                else
+                {
+                    nextGen.at(organism).at(gene) = currGen.at(parentTwo).at(gene);
+                }
             }
         }
     }
@@ -387,4 +402,13 @@ vector<Slide> hillClimbing(){
     }
 
     return current;
+}
+
+Slide mutateSlide(){
+
+    random_shuffle(photoList.begin(), photoList.end());
+
+    vector<Slide> aux = generateSlideshow(photoList);
+
+    return aux.at(rand() % aux.size());
 }
