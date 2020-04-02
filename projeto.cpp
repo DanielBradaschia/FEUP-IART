@@ -34,7 +34,7 @@ typedef struct
 
 
 vector<Photo> photoList;
-vector<Slide> bestGen;
+vector<Slide> bestGen, model;
 vector<vector<Slide>> currGen, nextGen;
 vector<int> organismsScore;
 int totalOfFitnesses, numOrganisms;
@@ -50,6 +50,7 @@ int calculateScore(vector<Slide> slideshow);
 void printSlide(Slide res);
 bool EvaluateOrganisms();
 int SelectOneOrganism();
+vector<Slide> hillClimbing();
 
 int main()
 {
@@ -75,7 +76,7 @@ int main()
     int i = stoi(numPhotos);
     numOrganisms = i;
 
-    cz = numOrganisms;
+    cz = 0;
     int id = 1;
 
     while(i > 0){
@@ -90,26 +91,21 @@ int main()
         id++;
     }
 
+
+    model = hillClimbing();
+
+    
     //Fill organisms
-    for(int j = 0; j < 10; j++)
+    for(int j = 0; j < numOrganisms; j++)
     {
         currGen.push_back(generateSlideshow(photoList));
         nextGen.push_back(generateSlideshow(photoList));
         organismsScore.push_back(calculateScore(currGen.at(j)));
         random_shuffle(photoList.begin(), photoList.end());
     }
-
+    
     
     answer = DoOneRun();
-
-    bestGen = currGen.at(0);
-    for (int k = 0; k < currGen.size(); k++)
-    {
-        if (calculateScore(bestGen) < calculateScore(currGen.at(k)))
-        {
-            bestGen = currGen.at(k);
-        }
-    }
 
     //write slideshow
     outputFile.open("slideshow.txt");
@@ -211,8 +207,8 @@ void ProduceNextGeneration(){
     int parentTwo;
     int crossoverPoint;
 
-        //fill the nextGeneration data structure with the
-        //children
+    //fill the nextGeneration data structure with the
+    //children
     for (organism = 0; organism < currGen.size(); ++organism)
     {
         parentOne = SelectOneOrganism();
@@ -267,12 +263,15 @@ bool EvaluateOrganisms(){
     {
         currentOrganismsFitnessTally = calculateScore(currGen.at(i));
         totalOfFitnesses += currentOrganismsFitnessTally;
+
+        if (currentOrganismsFitnessTally > calculateScore(model))
+        {
+            bestGen = currGen.at(i);
+            return true;
+        }    
     }
 
-    cz--;
-
-    if(cz == 0)
-        return true;
+    cz++;
 
     return false;
 }
@@ -360,4 +359,32 @@ int calculateScore(vector<Slide> slideshow){
         res += min(aux, intersection.size());
     }
     return res;
+}
+
+vector<Slide> hillClimbing(){
+
+    vector<Slide> current = generateSlideshow(photoList);
+    vector<Slide> neighbor;
+    
+    int currentScore, neighborScore;
+
+    while (true)
+    {
+        neighbor = generateSlideshow(photoList);
+        currentScore = calculateScore(current);
+        neighborScore = calculateScore(neighbor);
+
+        cout << "Current Score: " << currentScore << endl;
+        cout << "Neighbor Score: " << neighborScore << endl;
+
+        if (neighborScore <= currentScore)
+        {
+            return current;
+        }
+
+        current = neighbor;
+        random_shuffle(photoList.begin(), photoList.end());
+    }
+
+    return current;
 }
