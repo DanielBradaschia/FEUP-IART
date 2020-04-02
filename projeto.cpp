@@ -54,6 +54,9 @@ int SelectOneOrganism();
 vector<Slide> hillClimbing();
 Slide mutateSlide();
 
+int myrandom(int i) { return rand() % i; }
+
+
 int main()
 {
     string fileRead, line, numPhotos;
@@ -93,21 +96,19 @@ int main()
         id++;
     }
 
-
     model = hillClimbing();
 
-    
     //Fill organisms
-    for(int j = 0; j < numOrganisms; j++)
+    for(int j = 0; j < 5; j++)
     {
         currGen.push_back(generateSlideshow(photoList));
         nextGen.push_back(generateSlideshow(photoList));
         organismsScore.push_back(calculateScore(currGen.at(j)));
-        random_shuffle(photoList.begin(), photoList.end());
+        random_shuffle(photoList.begin(), photoList.end(), myrandom);
     }
-    
-    
+
     answer = DoOneRun();
+
     cout << "Best Generation was: " << answer << endl;
     //write slideshow
     outputFile.open("slideshow.txt");
@@ -195,7 +196,7 @@ int DoOneRun(){
         
         if (ans == true)
             return gen;
-        
+
         ProduceNextGeneration();
         ++gen;
     }
@@ -243,7 +244,7 @@ void ProduceNextGeneration(){
     }
     // copy the children in nextGeneration into
     // currentGeneration
-    for(organism = 0; organism < numOrganisms; ++organism){
+    for(organism = 0; organism < 5; ++organism){
         for (gene = 0; gene < currGen.at(0).size(); ++gene)
         {
             currGen[organism][gene] = nextGen[organism][gene];
@@ -273,26 +274,25 @@ bool EvaluateOrganisms(){
     int organism;
     int gene;
     int currentOrganismsFitnessTally;
-    bool res;
+    int ret = false;
 
     for(int i = 0; i < currGen.size(); i++)
     {
         currentOrganismsFitnessTally = calculateScore(currGen.at(i));
         totalOfFitnesses += currentOrganismsFitnessTally;
 
-        cout << "Tally: " << currentOrganismsFitnessTally << endl;
-        cout << "Model: " << calculateScore(model) << endl;
-
         if (currentOrganismsFitnessTally > calculateScore(model))
         {
             bestGen = currGen.at(i);
-            res = true;
+            ret = true;
         }    
     }
 
     cz++;
 
-    return res;
+    cout << "Final Score: " << calculateScore(bestGen) << endl;
+
+    return ret;
 }
 
 vector<Slide> generateSlideshow(vector<Photo> photoList){
@@ -389,20 +389,18 @@ vector<Slide> hillClimbing(){
 
     while (true)
     {
+        random_shuffle(photoList.begin(), photoList.end(), myrandom);
         neighbor = generateSlideshow(photoList);
         currentScore = calculateScore(current);
         neighborScore = calculateScore(neighbor);
 
-        cout << "Current Score: " << currentScore << endl;
-        cout << "Neighbor Score: " << neighborScore << endl;
-
-        if (neighborScore < currentScore)
+        if (neighborScore > currentScore)
         {
+            cout << "Initial Score: " << currentScore << endl;
             return current;
         }
 
         current = neighbor;
-        random_shuffle(photoList.begin(), photoList.end());
     }
 
     return current;
