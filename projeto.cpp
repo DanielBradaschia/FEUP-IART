@@ -121,6 +121,7 @@ int main()
         else
             outputFile << " " << bestGen.at(i).photo2Id << endl;
     }
+    cout << "Solution saved at slideshow.txt" << endl;
 
     return 0;
 }
@@ -193,9 +194,11 @@ int DoOneRun(){
     while (true)
     {
         ans = EvaluateOrganisms();
-        
+    
         if (ans == true)
-            return gen;
+         return gen;
+        else
+            cout << "Current Generation is " << gen << ", producing next generation!" << endl;
 
         ProduceNextGeneration();
         ++gen;
@@ -281,11 +284,16 @@ bool EvaluateOrganisms(){
         currentOrganismsFitnessTally = calculateScore(currGen.at(i));
         totalOfFitnesses += currentOrganismsFitnessTally;
 
+        cout << "Current Organism's Score is: " << currentOrganismsFitnessTally << endl;
+        cout << "Model score value: " << calculateScore(model) << endl;
+
         if (currentOrganismsFitnessTally > calculateScore(model))
-        {
+        {   
+            cout << "Found a better organism! Saving it as potential solution" << endl;
             bestGen = currGen.at(i);
             ret = true;
-        }    
+        }
+        cout << "Evaluating other organisms" << endl;   
     }
 
     cz++;
